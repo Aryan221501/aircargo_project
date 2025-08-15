@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Air Cargo Booking & Tracking System{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="hero-title fade-in">Air Cargo Booking & Tracking</h1>
+                <p class="hero-subtitle fade-in">Professional cargo management system for efficient air freight operations. Book, track, and manage your cargo shipments with ease.</p>
+                <div class="fade-in">
+                    <a href="/create-booking/" class="btn btn-primary btn-lg me-3">
+                        <i class="bi bi-plus-circle me-2"></i>Create Booking
+                    </a>
+                    <a href="/search-booking/" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-search me-2"></i>Track Shipment
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="hero-image fade-in">
+                    <i class="bi bi-airplane" style="font-size: 12rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">System Features</h2>
+                <p class="lead text-muted">Comprehensive air cargo management solution</p>
+            </div>
+        </div>
+        
+        <div class="row g-4">
+            <!-- Create Booking Feature -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-plus-circle-fill text-primary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Create Bookings</h5>
+                        <p class="card-text">Book air cargo shipments with detailed information including origin, destination, weight, and pieces.</p>
+                        <a href="/create-booking/" class="btn btn-primary">
+                            <i class="bi bi-arrow-right me-1"></i>Start Booking
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Route Planning Feature -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-map-fill text-success" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Route Planning</h5>
+                        <p class="card-text">Find direct flights and optimal transit routes between origin and destination airports.</p>
+                        <button class="btn btn-success" onclick="showRouteDemo()">
+                            <i class="bi bi-arrow-right me-1"></i>View Routes
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Tracking Feature -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-geo-alt-fill text-warning" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Real-time Tracking</h5>
+                        <p class="card-text">Track your cargo shipments with detailed timeline and status updates throughout the journey.</p>
+                        <a href="/search-booking/" class="btn btn-warning">
+                            <i class="bi bi-arrow-right me-1"></i>Track Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Status Management Feature -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-check-circle-fill text-info" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Status Management</h5>
+                        <p class="card-text">Manage booking statuses including departure, arrival, and delivery confirmations.</p>
+                        <button class="btn btn-info" onclick="showStatusDemo()">
+                            <i class="bi bi-arrow-right me-1"></i>Learn More
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Flight Integration Feature -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-airplane-engines-fill text-danger" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Flight Integration</h5>
+                        <p class="card-text">Seamless integration with flight schedules and capacity management for efficient cargo allocation.</p>
+                        <button class="btn btn-danger" onclick="showFlightDemo()">
+                            <i class="bi bi-arrow-right me-1"></i>View Flights
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reporting Feature -->
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 text-center">
+                    <div class="card-body p-4">
+                        <div class="mb-3">
+                            <i class="bi bi-graph-up-arrow text-secondary" style="font-size: 3rem;"></i>
+                        </div>
+                        <h5 class="card-title">Analytics & Reports</h5>
+                        <p class="card-text">Comprehensive reporting and analytics for cargo operations and performance monitoring.</p>
+                        <button class="btn btn-secondary" onclick="showReportsDemo()">
+                            <i class="bi bi-arrow-right me-1"></i>View Reports
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 col-6 mb-4">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body">
+                        <h2 class="display-4 fw-bold text-primary" id="totalBookings">0</h2>
+                        <p class="text-muted mb-0">Total Bookings</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body">
+                        <h2 class="display-4 fw-bold text-success" id="activeFlights">0</h2>
+                        <p class="text-muted mb-0">Active Flights</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body">
+                        <h2 class="display-4 fw-bold text-warning" id="inTransit">0</h2>
+                        <p class="text-muted mb-0">In Transit</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <div class="card border-0 bg-transparent">
+                    <div class="card-body">
+                        <h2 class="display-4 fw-bold text-info" id="delivered">0</h2>
+                        <p class="text-muted mb-0">Delivered</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Quick Actions Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="display-5 fw-bold mb-3">Quick Actions</h2>
+                <p class="lead text-muted">Get started with common tasks</p>
+            </div>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-lightning-charge me-2"></i>Quick Search</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="quickSearchForm">
+                            <div class="input-group input-group-lg">
+                                <input type="text" class="form-control" id="quickSearchInput" 
+                                       placeholder="Enter booking reference ID (e.g., AC20240815ABC123)" 
+                                       maxlength="20">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="bi bi-search me-2"></i>Search
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load dashboard statistics
+    loadDashboardStats();
+    
+    // Quick search form handler
+    document.getElementById('quickSearchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const refId = document.getElementById('quickSearchInput').value.trim();
+        if (refId) {
+            window.location.href = `/booking-detail/?ref_id=${encodeURIComponent(refId)}`;
+        }
+    });
+});
+
+async function loadDashboardStats() {
+    try {
+        // Load bookings statistics
+        const bookingsResponse = await axios.get(`${API_BASE_URL}/bookings/`);
+        const bookings = bookingsResponse.data.results || bookingsResponse.data;
+        
+        // Load flights statistics
+        const flightsResponse = await axios.get(`${API_BASE_URL}/flights/`);
+        const flights = flightsResponse.data.results || flightsResponse.data;
+        
+        // Calculate statistics
+        const totalBookings = Array.isArray(bookings) ? bookings.length : 0;
+        const activeFlights = Array.isArray(flights) ? flights.length : 0;
+        const inTransit = Array.isArray(bookings) ? bookings.filter(b => b.status === 'DEPARTED').length : 0;
+        const delivered = Array.isArray(bookings) ? bookings.filter(b => b.status === 'DELIVERED').length : 0;
+        
+        // Animate counters
+        animateCounter('totalBookings', totalBookings);
+        animateCounter('activeFlights', activeFlights);
+        animateCounter('inTransit', inTransit);
+        animateCounter('delivered', delivered);
+        
+    } catch (error) {
+        console.error('Error loading dashboard stats:', error);
+        // Set default values if API fails
+        animateCounter('totalBookings', 0);
+        animateCounter('activeFlights', 0);
+        animateCounter('inTransit', 0);
+        animateCounter('delivered', 0);
+    }
+}
+
+function animateCounter(elementId, targetValue) {
+    const element = document.getElementById(elementId);
+    const duration = 2000; // 2 seconds
+    const startTime = performance.now();
+    
+    function updateCounter(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const currentValue = Math.floor(progress * targetValue);
+        
+        element.textContent = currentValue.toLocaleString();
+        
+        if (progress < 1) {
+            requestAnimationFrame(updateCounter);
+        }
+    }
+    
+    requestAnimationFrame(updateCounter);
+}
+
+function showRouteDemo() {
+    showAlert('Route planning feature allows you to find direct flights and optimal transit routes between any two airports. Visit the Create Booking page to see available routes.', 'info');
+}
+
+function showStatusDemo() {
+    showAlert('Status management enables real-time tracking of cargo through different stages: Booked → Departed → Arrived → Delivered. Each status change is logged with timestamp and location.', 'info');
+}
+
+function showFlightDemo() {
+    showAlert('Flight integration provides seamless connection with airline schedules and cargo capacity management. The system automatically reserves cargo space on selected flights.', 'info');
+}
+
+function showReportsDemo() {
+    showAlert('Analytics and reporting features provide insights into cargo operations, delivery performance, and operational efficiency metrics.', 'info');
+}
+</script>
+{% endblock %}

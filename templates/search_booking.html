@@ -1,0 +1,370 @@
+{% extends 'base.html' %}
+
+{% block title %}Track Booking - Air Cargo System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex align-items-center mb-4">
+                <a href="/" class="btn btn-outline-secondary me-3">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <h1 class="display-5 fw-bold mb-0">Track Your Booking</h1>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Search Form -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-search me-2"></i>Search Booking</h5>
+                </div>
+                <div class="card-body">
+                    <form id="searchForm">
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="refId" class="form-label">Booking Reference ID *</label>
+                                <input type="text" class="form-control form-control-lg" id="refId" 
+                                       placeholder="Enter booking reference (e.g., AC20240815ABC123)" 
+                                       maxlength="20" required>
+                                <div class="form-text">Enter the reference ID provided when you created the booking</div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">&nbsp;</label>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-primary btn-lg" id="searchBtn">
+                                        <i class="bi bi-search me-2"></i>Search
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Search Results -->
+            <div id="searchResults" style="display: none;"></div>
+            
+            <!-- Recent Bookings -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Bookings</h5>
+                </div>
+                <div class="card-body">
+                    <div id="recentBookings">
+                        <div class="text-center text-muted py-4">
+                            <div class="loading-spinner me-2"></div>
+                            Loading recent bookings...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Help Section -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-question-circle me-2"></i>How to Track</h6>
+                </div>
+                <div class="card-body">
+                    <ol class="list-unstyled">
+                        <li class="mb-3">
+                            <div class="d-flex">
+                                <span class="badge bg-primary rounded-circle me-3" style="width: 24px; height: 24px; line-height: 16px;">1</span>
+                                <div>
+                                    <strong>Enter Reference ID</strong><br>
+                                    <small class="text-muted">Use the booking reference provided during booking creation</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="mb-3">
+                            <div class="d-flex">
+                                <span class="badge bg-primary rounded-circle me-3" style="width: 24px; height: 24px; line-height: 16px;">2</span>
+                                <div>
+                                    <strong>View Status</strong><br>
+                                    <small class="text-muted">Check current status and location of your cargo</small>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="mb-0">
+                            <div class="d-flex">
+                                <span class="badge bg-primary rounded-circle me-3" style="width: 24px; height: 24px; line-height: 16px;">3</span>
+                                <div>
+                                    <strong>Track Timeline</strong><br>
+                                    <small class="text-muted">View complete journey history with timestamps</small>
+                                </div>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- Status Guide -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Status Guide</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <span class="status-badge status-booked me-2">Booked</span>
+                        <small class="text-muted">Booking confirmed, awaiting departure</small>
+                    </div>
+                    <div class="mb-3">
+                        <span class="status-badge status-departed me-2">Departed</span>
+                        <small class="text-muted">Cargo has left origin location</small>
+                    </div>
+                    <div class="mb-3">
+                        <span class="status-badge status-arrived me-2">Arrived</span>
+                        <small class="text-muted">Cargo has reached destination</small>
+                    </div>
+                    <div class="mb-0">
+                        <span class="status-badge status-delivered me-2">Delivered</span>
+                        <small class="text-muted">Cargo delivered to customer</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Load recent bookings
+    loadRecentBookings();
+    
+    // Search form handler
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        searchBooking();
+    });
+    
+    // Check if ref_id is provided in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const refId = urlParams.get('ref_id');
+    if (refId) {
+        document.getElementById('refId').value = refId;
+        searchBooking();
+    }
+});
+
+async function searchBooking() {
+    const refId = document.getElementById('refId').value.trim();
+    
+    if (!refId) {
+        showAlert('Please enter a booking reference ID', 'warning');
+        return;
+    }
+    
+    const searchBtn = document.getElementById('searchBtn');
+    showLoading(searchBtn);
+    
+    try {
+        const response = await axios.get(`${API_BASE_URL}/bookings/search/${refId}/`);
+        const booking = response.data;
+        
+        displayBookingResult(booking);
+        document.getElementById('searchResults').style.display = 'block';
+        
+        // Scroll to results
+        document.getElementById('searchResults').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'start' 
+        });
+        
+    } catch (error) {
+        console.error('Error searching booking:', error);
+        
+        let errorMessage = 'Booking not found';
+        if (error.response && error.response.status === 404) {
+            errorMessage = `No booking found with reference ID: ${refId}`;
+        } else if (error.response && error.response.data && error.response.data.error) {
+            errorMessage = error.response.data.error;
+        }
+        
+        showAlert(errorMessage, 'danger');
+        document.getElementById('searchResults').style.display = 'none';
+        
+    } finally {
+        hideLoading(searchBtn, '<i class="bi bi-search me-2"></i>Search');
+    }
+}
+
+function displayBookingResult(booking) {
+    const html = `
+        <div class="card mb-4 fade-in">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-box me-2"></i>Booking Details
+                </h5>
+                <span class="status-badge ${getStatusBadgeClass(booking.status)}">
+                    ${booking.status}
+                </span>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="fw-bold text-primary mb-3">Booking Information</h6>
+                        <div class="mb-2">
+                            <strong>Reference ID:</strong> ${booking.ref_id}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Route:</strong> ${booking.origin} → ${booking.destination}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Pieces:</strong> ${booking.pieces}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Weight:</strong> ${booking.weight_kg} kg
+                        </div>
+                        <div class="mb-2">
+                            <strong>Created:</strong> ${formatDateTime(booking.created_at)}
+                        </div>
+                        ${booking.current_location ? `
+                        <div class="mb-2">
+                            <strong>Current Location:</strong> 
+                            <span class="text-primary">${booking.current_location}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="fw-bold text-primary mb-3">Customer Information</h6>
+                        <div class="mb-2">
+                            <strong>Name:</strong> ${booking.customer_name}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Email:</strong> ${booking.customer_email}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Phone:</strong> ${booking.customer_phone}
+                        </div>
+                        ${booking.description ? `
+                        <div class="mb-2">
+                            <strong>Description:</strong> ${booking.description}
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                
+                ${booking.flights && booking.flights.length > 0 ? `
+                <div class="mt-4">
+                    <h6 class="fw-bold text-success mb-3">
+                        <i class="bi bi-airplane me-2"></i>Flight Information
+                    </h6>
+                    <div class="row">
+                        ${booking.flights.map(flight => `
+                        <div class="col-md-6 mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="card-title">${flight.flight_number}</h6>
+                                    <p class="card-text mb-1">
+                                        <strong>${flight.airline_name}</strong>
+                                    </p>
+                                    <p class="card-text mb-1">
+                                        ${flight.origin} → ${flight.destination}
+                                    </p>
+                                    <small class="text-muted">
+                                        ${formatDateTime(flight.departure_datetime)} → 
+                                        ${formatDateTime(flight.arrival_datetime)}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div class="mt-4 d-flex gap-2">
+                    <button class="btn btn-primary" onclick="viewFullHistory('${booking.ref_id}')">
+                        <i class="bi bi-clock-history me-2"></i>View Full Timeline
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="refreshBooking('${booking.ref_id}')">
+                        <i class="bi bi-arrow-clockwise me-2"></i>Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('searchResults').innerHTML = html;
+}
+
+async function loadRecentBookings() {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/bookings/?limit=5`);
+        const bookings = response.data.results || response.data;
+        
+        displayRecentBookings(bookings);
+        
+    } catch (error) {
+        console.error('Error loading recent bookings:', error);
+        document.getElementById('recentBookings').innerHTML = `
+            <div class="text-center text-muted py-4">
+                <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i>
+                <p class="mt-2 mb-0">Unable to load recent bookings</p>
+            </div>
+        `;
+    }
+}
+
+function displayRecentBookings(bookings) {
+    if (!bookings || bookings.length === 0) {
+        document.getElementById('recentBookings').innerHTML = `
+            <div class="text-center text-muted py-4">
+                <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                <p class="mt-2 mb-0">No recent bookings found</p>
+            </div>
+        `;
+        return;
+    }
+    
+    const html = bookings.map(booking => `
+        <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
+            <div class="flex-grow-1">
+                <div class="d-flex align-items-center mb-1">
+                    <strong class="me-2">${booking.ref_id}</strong>
+                    <span class="status-badge ${getStatusBadgeClass(booking.status)} small">
+                        ${booking.status}
+                    </span>
+                </div>
+                <div class="text-muted small">
+                    ${booking.origin} → ${booking.destination} | 
+                    ${booking.pieces} pieces, ${booking.weight_kg} kg
+                </div>
+                <div class="text-muted small">
+                    ${formatDateTime(booking.created_at)}
+                </div>
+            </div>
+            <div>
+                <button class="btn btn-sm btn-outline-primary" 
+                        onclick="searchSpecificBooking('${booking.ref_id}')">
+                    <i class="bi bi-eye"></i>
+                </button>
+            </div>
+        </div>
+    `).join('');
+    
+    document.getElementById('recentBookings').innerHTML = html;
+}
+
+function searchSpecificBooking(refId) {
+    document.getElementById('refId').value = refId;
+    searchBooking();
+}
+
+function refreshBooking(refId) {
+    document.getElementById('refId').value = refId;
+    searchBooking();
+}
+
+function viewFullHistory(refId) {
+    window.location.href = `/booking-detail/?ref_id=${refId}`;
+}
+</script>
+{% endblock %}

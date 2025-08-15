@@ -1,0 +1,454 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Booking - Air Cargo System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex align-items-center mb-4">
+                <a href="/" class="btn btn-outline-secondary me-3">
+                    <i class="bi bi-arrow-left"></i>
+                </a>
+                <h1 class="display-5 fw-bold mb-0">Create New Booking</h1>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Booking Form -->
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-plus-circle me-2"></i>Booking Information</h5>
+                </div>
+                <div class="card-body">
+                    <form id="bookingForm">
+                        <!-- Route Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="fw-bold text-primary mb-3">
+                                    <i class="bi bi-geo-alt me-2"></i>Route Information
+                                </h6>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="origin" class="form-label">Origin Airport *</label>
+                                <input type="text" class="form-control" id="origin" name="origin" 
+                                       placeholder="e.g., DEL, BOM, BLR" maxlength="10" required>
+                                <div class="form-text">Enter 3-letter airport code</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="destination" class="form-label">Destination Airport *</label>
+                                <input type="text" class="form-control" id="destination" name="destination" 
+                                       placeholder="e.g., DEL, BOM, BLR" maxlength="10" required>
+                                <div class="form-text">Enter 3-letter airport code</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="departureDate" class="form-label">Departure Date *</label>
+                                <input type="date" class="form-control" id="departureDate" name="departure_date" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <button type="button" class="btn btn-outline-primary mt-4" id="searchRoutesBtn">
+                                    <i class="bi bi-search me-2"></i>Search Routes
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Available Routes -->
+                        <div id="routesSection" class="mb-4" style="display: none;">
+                            <h6 class="fw-bold text-success mb-3">
+                                <i class="bi bi-airplane me-2"></i>Available Routes
+                            </h6>
+                            <div id="routesContainer"></div>
+                        </div>
+                        
+                        <!-- Cargo Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="fw-bold text-primary mb-3">
+                                    <i class="bi bi-box me-2"></i>Cargo Information
+                                </h6>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="pieces" class="form-label">Number of Pieces *</label>
+                                <input type="number" class="form-control" id="pieces" name="pieces" 
+                                       min="1" placeholder="e.g., 5" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="weight" class="form-label">Total Weight (kg) *</label>
+                                <input type="number" class="form-control" id="weight" name="weight_kg" 
+                                       min="1" placeholder="e.g., 100" required>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="description" class="form-label">Cargo Description</label>
+                                <textarea class="form-control" id="description" name="description" 
+                                          rows="3" placeholder="Describe the cargo contents..."></textarea>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="specialInstructions" class="form-label">Special Instructions</label>
+                                <textarea class="form-control" id="specialInstructions" name="special_instructions" 
+                                          rows="2" placeholder="Any special handling requirements..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <!-- Customer Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h6 class="fw-bold text-primary mb-3">
+                                    <i class="bi bi-person me-2"></i>Customer Information
+                                </h6>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="customerName" class="form-label">Customer Name *</label>
+                                <input type="text" class="form-control" id="customerName" name="customer_name" 
+                                       placeholder="Full name" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="customerPhone" class="form-label">Phone Number *</label>
+                                <input type="tel" class="form-control" id="customerPhone" name="customer_phone" 
+                                       placeholder="+1234567890" required>
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label for="customerEmail" class="form-label">Email Address *</label>
+                                <input type="email" class="form-control" id="customerEmail" name="customer_email" 
+                                       placeholder="customer@example.com" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Selected Flights (Hidden) -->
+                        <input type="hidden" id="selectedFlights" name="flight_ids">
+                        
+                        <!-- Submit Button -->
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <i class="bi bi-check-circle me-2"></i>Create Booking
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Booking Summary -->
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clipboard-check me-2"></i>Booking Summary</h5>
+                </div>
+                <div class="card-body">
+                    <div id="bookingSummary">
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+                            <p class="mt-2 mb-0">Fill in the booking details to see summary</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Help Card -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-question-circle me-2"></i>Need Help?</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <strong>Airport Codes:</strong>
+                        <ul class="list-unstyled mt-2 small">
+                            <li>DEL - Delhi</li>
+                            <li>BOM - Mumbai</li>
+                            <li>BLR - Bangalore</li>
+                            <li>MAA - Chennai</li>
+                            <li>CCU - Kolkata</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <strong>Booking Process:</strong>
+                        <ol class="small mt-2">
+                            <li>Enter route details</li>
+                            <li>Search for available flights</li>
+                            <li>Select preferred route</li>
+                            <li>Fill cargo & customer info</li>
+                            <li>Submit booking</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let selectedFlightIds = [];
+let routeData = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Set minimum date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('departureDate').min = today;
+    document.getElementById('departureDate').value = today;
+    
+    // Form event listeners
+    document.getElementById('searchRoutesBtn').addEventListener('click', searchRoutes);
+    document.getElementById('bookingForm').addEventListener('submit', createBooking);
+    
+    // Update summary on form changes
+    const formInputs = document.querySelectorAll('#bookingForm input, #bookingForm textarea');
+    formInputs.forEach(input => {
+        input.addEventListener('input', updateBookingSummary);
+    });
+});
+
+async function searchRoutes() {
+    const origin = document.getElementById('origin').value.trim().toUpperCase();
+    const destination = document.getElementById('destination').value.trim().toUpperCase();
+    const departureDate = document.getElementById('departureDate').value;
+    
+    if (!origin || !destination || !departureDate) {
+        showAlert('Please fill in origin, destination, and departure date', 'warning');
+        return;
+    }
+    
+    if (origin === destination) {
+        showAlert('Origin and destination cannot be the same', 'warning');
+        return;
+    }
+    
+    const searchBtn = document.getElementById('searchRoutesBtn');
+    showLoading(searchBtn);
+    
+    try {
+        const response = await axios.post(`${API_BASE_URL}/flights/routes/`, {
+            origin: origin,
+            destination: destination,
+            departure_date: departureDate
+        });
+        
+        routeData = response.data;
+        displayRoutes(routeData);
+        document.getElementById('routesSection').style.display = 'block';
+        
+    } catch (error) {
+        console.error('Error searching routes:', error);
+        showAlert('Error searching routes. Please try again.', 'danger');
+    } finally {
+        hideLoading(searchBtn, '<i class="bi bi-search me-2"></i>Search Routes');
+    }
+}
+
+function displayRoutes(data) {
+    const container = document.getElementById('routesContainer');
+    let html = '';
+    
+    // Direct flights
+    if (data.direct_flights && data.direct_flights.length > 0) {
+        html += '<div class="mb-4">';
+        html += '<h6 class="fw-bold text-success mb-3"><i class="bi bi-arrow-right me-2"></i>Direct Flights</h6>';
+        
+        data.direct_flights.forEach(flight => {
+            html += `
+                <div class="card mb-2 route-option" data-flight-ids="[${flight.id}]" data-route-type="direct">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h6 class="mb-1">${flight.flight_number} - ${flight.airline_name}</h6>
+                                <p class="mb-1 text-muted">
+                                    <i class="bi bi-clock me-1"></i>
+                                    ${formatDateTime(flight.departure_datetime)} → ${formatDateTime(flight.arrival_datetime)}
+                                </p>
+                                <p class="mb-0 small text-success">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Available capacity: ${flight.available_cargo_weight} kg
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button class="btn btn-outline-primary select-route-btn">
+                                    <i class="bi bi-check me-1"></i>Select
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    
+    // Transit routes
+    if (data.transit_routes && data.transit_routes.length > 0) {
+        html += '<div class="mb-4">';
+        html += '<h6 class="fw-bold text-warning mb-3"><i class="bi bi-shuffle me-2"></i>Transit Routes</h6>';
+        
+        data.transit_routes.forEach((route, index) => {
+            const flightIds = route.map(f => f.id);
+            html += `
+                <div class="card mb-2 route-option" data-flight-ids="[${flightIds.join(',')}]" data-route-type="transit">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h6 class="mb-2">Transit Route ${index + 1}</h6>
+            `;
+            
+            route.forEach((flight, flightIndex) => {
+                html += `
+                    <div class="mb-2 ${flightIndex > 0 ? 'border-top pt-2' : ''}">
+                        <strong>${flight.flight_number} - ${flight.airline_name}</strong><br>
+                        <small class="text-muted">
+                            <i class="bi bi-clock me-1"></i>
+                            ${formatDateTime(flight.departure_datetime)} → ${formatDateTime(flight.arrival_datetime)}
+                        </small><br>
+                        <small class="text-success">
+                            <i class="bi bi-check-circle me-1"></i>
+                            Available: ${flight.available_cargo_weight} kg
+                        </small>
+                    </div>
+                `;
+            });
+            
+            html += `
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <button class="btn btn-outline-warning select-route-btn">
+                                    <i class="bi bi-check me-1"></i>Select
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+    }
+    
+    if (!html) {
+        html = `
+            <div class="text-center text-muted py-4">
+                <i class="bi bi-exclamation-triangle" style="font-size: 2rem;"></i>
+                <p class="mt-2 mb-0">No routes found for the selected criteria</p>
+            </div>
+        `;
+    }
+    
+    container.innerHTML = html;
+    
+    // Add click handlers for route selection
+    document.querySelectorAll('.select-route-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            selectRoute(this);
+        });
+    });
+}
+
+function selectRoute(button) {
+    // Remove previous selections
+    document.querySelectorAll('.route-option').forEach(option => {
+        option.classList.remove('border-primary');
+        option.classList.add('border-light');
+    });
+    
+    // Mark current selection
+    const routeOption = button.closest('.route-option');
+    routeOption.classList.remove('border-light');
+    routeOption.classList.add('border-primary');
+    
+    // Store selected flight IDs
+    const flightIdsStr = routeOption.getAttribute('data-flight-ids');
+    selectedFlightIds = JSON.parse(flightIdsStr);
+    
+    // Update hidden input
+    document.getElementById('selectedFlights').value = selectedFlightIds.join(',');
+    
+    // Update summary
+    updateBookingSummary();
+    
+    showAlert('Route selected successfully!', 'success');
+}
+
+function updateBookingSummary() {
+    const origin = document.getElementById('origin').value;
+    const destination = document.getElementById('destination').value;
+    const pieces = document.getElementById('pieces').value;
+    const weight = document.getElementById('weight').value;
+    const customerName = document.getElementById('customerName').value;
+    
+    const summaryDiv = document.getElementById('bookingSummary');
+    
+    if (origin || destination || pieces || weight || customerName) {
+        summaryDiv.innerHTML = `
+            <div class="mb-3">
+                <strong>Route:</strong> ${origin || 'N/A'} → ${destination || 'N/A'}
+            </div>
+            <div class="mb-3">
+                <strong>Cargo:</strong> ${pieces || 0} pieces, ${weight || 0} kg
+            </div>
+            <div class="mb-3">
+                <strong>Customer:</strong> ${customerName || 'N/A'}
+            </div>
+            ${selectedFlightIds.length > 0 ? `
+            <div class="mb-3">
+                <strong>Flights:</strong> ${selectedFlightIds.length} selected
+            </div>
+            ` : ''}
+        `;
+    } else {
+        summaryDiv.innerHTML = `
+            <div class="text-center text-muted py-4">
+                <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
+                <p class="mt-2 mb-0">Fill in the booking details to see summary</p>
+            </div>
+        `;
+    }
+}
+
+async function createBooking(event) {
+    event.preventDefault();
+    
+    // Get form data
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData.entries());
+    
+    // Convert flight_ids to array if present
+    if (data.flight_ids) {
+        data.flight_ids = data.flight_ids.split(',').map(id => parseInt(id)).filter(id => !isNaN(id));
+    } else {
+        data.flight_ids = [];
+    }
+    
+    // Convert numeric fields
+    data.pieces = parseInt(data.pieces);
+    data.weight_kg = parseInt(data.weight_kg);
+    
+    const submitBtn = document.getElementById('submitBtn');
+    showLoading(submitBtn);
+    
+    try {
+        const response = await axios.post(`${API_BASE_URL}/bookings/`, data);
+        const booking = response.data;
+        
+        showAlert('Booking created successfully!', 'success');
+        
+        // Redirect to booking details page after a short delay
+        setTimeout(() => {
+            window.location.href = `/booking-detail/?ref_id=${booking.ref_id}`;
+        }, 1500);
+        
+    } catch (error) {
+        console.error('Error creating booking:', error);
+        
+        let errorMessage = 'Error creating booking. Please try again.';
+        if (error.response && error.response.data) {
+            if (typeof error.response.data === 'object') {
+                errorMessage = Object.values(error.response.data).flat().join(', ') || errorMessage;
+            } else if (typeof error.response.data === 'string') {
+                errorMessage = error.response.data;
+            }
+        }
+        
+        showAlert(errorMessage, 'danger');
+    } finally {
+        hideLoading(submitBtn, '<i class="bi bi-check-circle me-2"></i>Create Booking');
+    }
+}
+</script>
+{% endblock %}
