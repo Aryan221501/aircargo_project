@@ -103,6 +103,28 @@ class BookingCreateSerializer(serializers.ModelSerializer):
     def validate_destination(self, value):
         return value.upper()
 
+    def create(self, validated_data):
+        flight_ids = validated_data.pop('flight_ids', [])
+        booking = Booking.objects.create(**validated_data)
+        
+        if flight_ids:
+            flights = Flight.objects.filter(id__in=flight_ids)
+            booking.flights.set(flights)
+            
+            # Reserve cargo weight on flights
+            for flight in flights:
+                flight.reserve_cargo_weight(booking.weight_kg)
+        
+        # Create initial booking event
+        BookingEvent.objects.create(
+            booking=booking,
+            event_type='BOOKED',
+            location=booking.origin,
+            description=f"Booking created for {booking.pieces} pieces, {booking.weight_kg}kg"
+        )
+        
+        return booking
+
 
 class BookingUpdateSerializer(serializers.ModelSerializer):
     """
