@@ -19,6 +19,7 @@ The Air Cargo Booking & Tracking System is a full-featured web application desig
 - **Status Management**: Complete lifecycle tracking (Booked → Departed → Arrived → Delivered)
 - **Responsive UI**: Modern, mobile-friendly interface built with Bootstrap 5
 - **User Authentication**: Secure user registration and login system
+- **API Integration**: RESTful API endpoints for all core functionalities
 
 ## 🛠 Technology Stack
 
@@ -74,6 +75,9 @@ aircargo_system/
 │   ├── tests.py             # Unit tests
 │   ├── urls.py              # Flight-specific URLs
 │   └── views.py             # Flight API views
+├── docs/                     # Documentation files
+│   ├── Air Cargo Booking & Tracking.pdf  # Project documentation
+│   └── CRUD_Operations_Interview_Guide.md # Django CRUD guide
 ├── media/                    # Media files (uploaded content)
 ├── static/                   # Static assets
 │   └── css/                 # CSS stylesheets
@@ -85,6 +89,10 @@ aircargo_system/
 │   ├── flight_integration.html # Flight integration page
 │   ├── index.html           # Home page
 │   └── search_booking.html  # Booking search page
+├── tests/                    # Test files
+│   ├── test_capacity_check.py
+│   ├── test_capacity_check_fixed.py
+│   └── test_multiple_flights_capacity.py
 ├── manage.py                # Django management script
 ├── requirements.txt         # Python dependencies
 ├── create_sample_data.py    # Sample data generation script
@@ -102,7 +110,7 @@ aircargo_system/
 
 ### 1. Clone the Repository
 ```bash
-git clone <repository-url>
+git clone https://github.com/Aryan221501/aircargo_project.git
 cd aircargo_system
 ```
 
