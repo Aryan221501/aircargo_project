@@ -1,5 +1,6 @@
 from rest_framework import generics, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Q
 from datetime import datetime, timedelta
@@ -16,6 +17,18 @@ class FlightListCreateView(generics.ListCreateAPIView):
     """
     queryset = Flight.objects.all()
     serializer_class = FlightSerializer
+    
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.request.method == 'POST':
+            # Require authentication for creating flights
+            permission_classes = [IsAuthenticated]
+        else:
+            # Allow anyone to list flights
+            permission_classes = [AllowAny]
+        return [permission() for permission in permission_classes]
     
     def get_queryset(self):
         queryset = Flight.objects.all()
@@ -43,9 +56,22 @@ class FlightDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Flight.objects.all()
     serializer_class = FlightSerializer
+    
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            # Require authentication for updating/deleting flights
+            permission_classes = [IsAuthenticated]
+        else:
+            # Allow anyone to retrieve flights
+            permission_classes = [AllowAny]
+        return [permission() for permission in permission_classes]
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def get_routes(request):
     """
     Get direct flights and 1-transit routes for given origin, destination, and departure date.
@@ -122,6 +148,7 @@ def get_routes(request):
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def flight_search(request):
     """
     Search flights with various filters.

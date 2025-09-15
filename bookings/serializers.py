@@ -64,9 +64,34 @@ class BookingSerializer(serializers.ModelSerializer):
             flights = Flight.objects.filter(id__in=flight_ids)
             booking.flights.set(flights)
             
-            # Reserve cargo weight on flights
+            # Reserve cargo weight on flights and track reservations for rollback
+            reserved_flights = []
+            reservation_failed = False
+            failure_message = ""
+            
             for flight in flights:
-                flight.reserve_cargo_weight(booking.weight_kg)
+                if flight.reserve_cargo_weight(booking.weight_kg):
+                    reserved_flights.append(flight)
+                else:
+                    # Reservation failed
+                    reservation_failed = True
+                    failure_message = (
+                        f"Flight {flight.flight_number} does not have sufficient cargo capacity "
+                        f"({flight.available_cargo_weight}kg available, {booking.weight_kg}kg required)"
+                    )
+                    break
+            
+            # If any reservation failed, rollback all previous reservations and delete booking
+            if reservation_failed:
+                # Release cargo weight on previously reserved flights
+                for reserved_flight in reserved_flights:
+                    reserved_flight.release_cargo_weight(booking.weight_kg)
+                
+                # Delete the booking
+                booking.delete()
+                
+                # Raise validation error
+                raise serializers.ValidationError(failure_message)
         
         # Create initial booking event
         BookingEvent.objects.create(
@@ -111,9 +136,34 @@ class BookingCreateSerializer(serializers.ModelSerializer):
             flights = Flight.objects.filter(id__in=flight_ids)
             booking.flights.set(flights)
             
-            # Reserve cargo weight on flights
+            # Reserve cargo weight on flights and track reservations for rollback
+            reserved_flights = []
+            reservation_failed = False
+            failure_message = ""
+            
             for flight in flights:
-                flight.reserve_cargo_weight(booking.weight_kg)
+                if flight.reserve_cargo_weight(booking.weight_kg):
+                    reserved_flights.append(flight)
+                else:
+                    # Reservation failed
+                    reservation_failed = True
+                    failure_message = (
+                        f"Flight {flight.flight_number} does not have sufficient cargo capacity "
+                        f"({flight.available_cargo_weight}kg available, {booking.weight_kg}kg required)"
+                    )
+                    break
+            
+            # If any reservation failed, rollback all previous reservations and delete booking
+            if reservation_failed:
+                # Release cargo weight on previously reserved flights
+                for reserved_flight in reserved_flights:
+                    reserved_flight.release_cargo_weight(booking.weight_kg)
+                
+                # Delete the booking
+                booking.delete()
+                
+                # Raise validation error
+                raise serializers.ValidationError(failure_message)
         
         # Create initial booking event
         BookingEvent.objects.create(

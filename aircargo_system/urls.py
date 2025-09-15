@@ -24,10 +24,12 @@ urlpatterns = [
     # API endpoints
     path('api/flights/', include('flights.urls')),
     path('api/bookings/', include('bookings.urls')),
+    path('api/accounts/', include('accounts.urls')),
     
     # Frontend routes
     path('', TemplateView.as_view(template_name='index.html'), name='home'),
     path('create-booking/', TemplateView.as_view(template_name='create_booking.html'), name='create-booking'),
     path('search-booking/', TemplateView.as_view(template_name='search_booking.html'), name='search-booking'),
     path('booking-detail/', TemplateView.as_view(template_name='booking_detail.html'), name='booking-detail'),
+    path('flight-integration/', TemplateView.as_view(template_name='flight_integration.html'), name='flight-integration'),
 ]

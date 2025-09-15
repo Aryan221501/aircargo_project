@@ -1,5 +1,6 @@
 from rest_framework import generics, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from django.core.cache import cache
@@ -26,6 +27,18 @@ class BookingListCreateView(generics.ListCreateAPIView):
         if self.request.method == 'POST':
             return BookingCreateSerializer
         return BookingSerializer
+    
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.request.method == 'POST':
+            # Require authentication for creating bookings
+            permission_classes = [IsAuthenticated]
+        else:
+            # Allow anyone to list bookings (but we'll filter by user later)
+            permission_classes = [AllowAny]
+        return [permission() for permission in permission_classes]
     
     def get_queryset(self):
         queryset = Booking.objects.all()
@@ -79,9 +92,22 @@ class BookingDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Booking.objects.all()
     serializer_class = BookingSerializer
     lookup_field = 'ref_id'
+    
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            # Require authentication for updating/deleting bookings
+            permission_classes = [IsAuthenticated]
+        else:
+            # Allow anyone to retrieve bookings
+            permission_classes = [AllowAny]
+        return [permission() for permission in permission_classes]
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def booking_by_ref_id(request, ref_id):
     """
     Get booking details by reference ID.
@@ -98,6 +124,7 @@ def booking_by_ref_id(request, ref_id):
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def booking_history(request, ref_id):
     """
     Get booking history with full chronological event timeline.
@@ -114,6 +141,7 @@ def booking_history(request, ref_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def depart_booking(request, ref_id):
     """
     Mark a booking as departed.
@@ -178,6 +206,7 @@ def depart_booking(request, ref_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def arrive_booking(request, ref_id):
     """
     Mark a booking as arrived at a location.
@@ -242,6 +271,7 @@ def arrive_booking(request, ref_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def deliver_booking(request, ref_id):
     """
     Mark a booking as delivered.
@@ -286,6 +316,7 @@ def deliver_booking(request, ref_id):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def cancel_booking(request, ref_id):
     """
     Cancel a booking.
@@ -323,6 +354,7 @@ def cancel_booking(request, ref_id):
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def booking_events(request, ref_id):
     """
     Get all events for a booking.

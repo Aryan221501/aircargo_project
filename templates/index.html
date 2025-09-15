@@ -2,6 +2,24 @@
 
 {% block title %}Home - Air Cargo Booking & Tracking System{% endblock %}
 
+{% block extra_css %}
+<style>
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+        
+        .card {
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- Hero Section -->
 <section class="hero-section">
@@ -10,8 +28,8 @@
             <div class="col-lg-6">
                 <h1 class="hero-title fade-in">Air Cargo Booking & Tracking</h1>
                 <p class="hero-subtitle fade-in">Professional cargo management system for efficient air freight operations. Book, track, and manage your cargo shipments with ease.</p>
-                <div class="fade-in">
-                    <a href="/create-booking/" class="btn btn-primary btn-lg me-3">
+                <div class="mt-4 fade-in">
+                    <a href="/create-booking/" class="btn btn-primary btn-lg me-3 pulse">
                         <i class="bi bi-plus-circle me-2"></i>Create Booking
                     </a>
                     <a href="/search-booking/" class="btn btn-outline-light btn-lg">
@@ -47,8 +65,8 @@
                             <i class="bi bi-plus-circle-fill text-primary" style="font-size: 3rem;"></i>
                         </div>
                         <h5 class="card-title">Create Bookings</h5>
-                        <p class="card-text">Book air cargo shipments with detailed information including origin, destination, weight, and pieces.</p>
-                        <a href="/create-booking/" class="btn btn-primary">
+                        <p class="card-text text-muted">Book air cargo shipments with detailed information including origin, destination, weight, and pieces.</p>
+                        <a href="/create-booking/" class="btn btn-primary mt-3">
                             <i class="bi bi-arrow-right me-1"></i>Start Booking
                         </a>
                     </div>
@@ -63,8 +81,8 @@
                             <i class="bi bi-map-fill text-success" style="font-size: 3rem;"></i>
                         </div>
                         <h5 class="card-title">Route Planning</h5>
-                        <p class="card-text">Find direct flights and optimal transit routes between origin and destination airports.</p>
-                        <button class="btn btn-success" onclick="showRouteDemo()">
+                        <p class="card-text text-muted">Find direct flights and optimal transit routes between origin and destination airports.</p>
+                        <button class="btn btn-success mt-3" onclick="showRouteDemo()">
                             <i class="bi bi-arrow-right me-1"></i>View Routes
                         </button>
                     </div>
@@ -79,8 +97,8 @@
                             <i class="bi bi-geo-alt-fill text-warning" style="font-size: 3rem;"></i>
                         </div>
                         <h5 class="card-title">Real-time Tracking</h5>
-                        <p class="card-text">Track your cargo shipments with detailed timeline and status updates throughout the journey.</p>
-                        <a href="/search-booking/" class="btn btn-warning">
+                        <p class="card-text text-muted">Track your cargo shipments with detailed timeline and status updates throughout the journey.</p>
+                        <a href="/search-booking/" class="btn btn-warning mt-3">
                             <i class="bi bi-arrow-right me-1"></i>Track Now
                         </a>
                     </div>
@@ -95,8 +113,8 @@
                             <i class="bi bi-check-circle-fill text-info" style="font-size: 3rem;"></i>
                         </div>
                         <h5 class="card-title">Status Management</h5>
-                        <p class="card-text">Manage booking statuses including departure, arrival, and delivery confirmations.</p>
-                        <button class="btn btn-info" onclick="showStatusDemo()">
+                        <p class="card-text text-muted">Manage booking statuses including departure, arrival, and delivery confirmations.</p>
+                        <button class="btn btn-info mt-3" onclick="showStatusDemo()">
                             <i class="bi bi-arrow-right me-1"></i>Learn More
                         </button>
                     </div>
@@ -111,8 +129,8 @@
                             <i class="bi bi-airplane-engines-fill text-danger" style="font-size: 3rem;"></i>
                         </div>
                         <h5 class="card-title">Flight Integration</h5>
-                        <p class="card-text">Seamless integration with flight schedules and capacity management for efficient cargo allocation.</p>
-                        <button class="btn btn-danger" onclick="showFlightDemo()">
+                        <p class="card-text text-muted">Seamless integration with flight schedules and capacity management for efficient cargo allocation.</p>
+                        <button class="btn btn-danger mt-3" onclick="showFlightDemo()">
                             <i class="bi bi-arrow-right me-1"></i>View Flights
                         </button>
                     </div>
@@ -127,8 +145,8 @@
                             <i class="bi bi-graph-up-arrow text-secondary" style="font-size: 3rem;"></i>
                         </div>
                         <h5 class="card-title">Analytics & Reports</h5>
-                        <p class="card-text">Comprehensive reporting and analytics for cargo operations and performance monitoring.</p>
-                        <button class="btn btn-secondary" onclick="showReportsDemo()">
+                        <p class="card-text text-muted">Comprehensive reporting and analytics for cargo operations and performance monitoring.</p>
+                        <button class="btn btn-secondary mt-3" onclick="showReportsDemo()">
                             <i class="bi bi-arrow-right me-1"></i>View Reports
                         </button>
                     </div>
@@ -139,11 +157,11 @@
 </section>
 
 <!-- Statistics Section -->
-<section class="py-5 bg-light">
+<section class="py-5">
     <div class="container">
         <div class="row text-center">
             <div class="col-md-3 col-6 mb-4">
-                <div class="card border-0 bg-transparent">
+                <div class="card">
                     <div class="card-body">
                         <h2 class="display-4 fw-bold text-primary" id="totalBookings">0</h2>
                         <p class="text-muted mb-0">Total Bookings</p>
@@ -151,7 +169,7 @@
                 </div>
             </div>
             <div class="col-md-3 col-6 mb-4">
-                <div class="card border-0 bg-transparent">
+                <div class="card">
                     <div class="card-body">
                         <h2 class="display-4 fw-bold text-success" id="activeFlights">0</h2>
                         <p class="text-muted mb-0">Active Flights</p>
@@ -159,7 +177,7 @@
                 </div>
             </div>
             <div class="col-md-3 col-6 mb-4">
-                <div class="card border-0 bg-transparent">
+                <div class="card">
                     <div class="card-body">
                         <h2 class="display-4 fw-bold text-warning" id="inTransit">0</h2>
                         <p class="text-muted mb-0">In Transit</p>
@@ -167,7 +185,7 @@
                 </div>
             </div>
             <div class="col-md-3 col-6 mb-4">
-                <div class="card border-0 bg-transparent">
+                <div class="card">
                     <div class="card-body">
                         <h2 class="display-4 fw-bold text-info" id="delivered">0</h2>
                         <p class="text-muted mb-0">Delivered</p>
@@ -281,20 +299,88 @@ function animateCounter(elementId, targetValue) {
     requestAnimationFrame(updateCounter);
 }
 
-function showRouteDemo() {
-    showAlert('Route planning feature allows you to find direct flights and optimal transit routes between any two airports. Visit the Create Booking page to see available routes.', 'info');
+// Route Planning Demo
+async function showRouteDemo() {
+    try {
+        // Show a sample route search
+        const sampleOrigin = 'DEL';
+        const sampleDestination = 'BLR';
+        const sampleDate = new Date().toISOString().split('T')[0];
+        
+        const response = await axios.post(`${API_BASE_URL}/flights/routes/`, {
+            origin: sampleOrigin,
+            destination: sampleDestination,
+            departure_date: sampleDate
+        });
+        
+        let message = `Route planning feature allows you to find direct flights and optimal transit routes between any two airports.<br><br>`;
+        message += `<strong>Sample search from ${sampleOrigin} to ${sampleDestination}:</strong><br>`;
+        
+        if (response.data.direct_flights && response.data.direct_flights.length > 0) {
+            message += `• Found ${response.data.direct_flights.length} direct flights<br>`;
+        }
+        
+        if (response.data.transit_routes && response.data.transit_routes.length > 0) {
+            message += `• Found ${response.data.transit_routes.length} transit routes<br>`;
+        }
+        
+        message += `<br>Visit the <a href="/create-booking/" class="alert-link">Create Booking</a> page to search for routes.`;
+        
+        showAlert(message, 'info');
+    } catch (error) {
+        console.error('Error in route demo:', error);
+        showAlert('Route planning feature allows you to find direct flights and optimal transit routes between any two airports. Visit the Create Booking page to see available routes.', 'info');
+    }
 }
 
+// Status Management Demo
 function showStatusDemo() {
-    showAlert('Status management enables real-time tracking of cargo through different stages: Booked → Departed → Arrived → Delivered. Each status change is logged with timestamp and location.', 'info');
+    const message = `
+        Status management enables real-time tracking of cargo through different stages:<br>
+        <span class="status-badge status-booked">Booked</span> → 
+        <span class="status-badge status-departed">Departed</span> → 
+        <span class="status-badge status-arrived">Arrived</span> → 
+        <span class="status-badge status-delivered">Delivered</span><br><br>
+        Each status change is logged with timestamp and location. You can update statuses manually on the booking detail page.
+    `;
+    showAlert(message, 'info');
 }
 
-function showFlightDemo() {
-    showAlert('Flight integration provides seamless connection with airline schedules and cargo capacity management. The system automatically reserves cargo space on selected flights.', 'info');
+// Flight Integration Demo
+async function showFlightDemo() {
+    try {
+        const response = await axios.get(`${API_BASE_URL}/flights/?limit=5`);
+        const flights = response.data.results || response.data;
+        
+        let message = `Flight integration provides seamless connection with airline schedules and cargo capacity management.<br><br>`;
+        message += `<strong>Sample active flights:</strong><br>`;
+        
+        if (flights && flights.length > 0) {
+            flights.slice(0, 3).forEach(flight => {
+                message += `• ${flight.flight_number} (${flight.airline_name}): ${flight.origin} → ${flight.destination}<br>`;
+            });
+        }
+        
+        message += `<br>The system automatically reserves cargo space on selected flights and manages capacity.`;
+        
+        showAlert(message, 'info');
+    } catch (error) {
+        console.error('Error in flight demo:', error);
+        showAlert('Flight integration provides seamless connection with airline schedules and cargo capacity management. The system automatically reserves cargo space on selected flights.', 'info');
+    }
 }
 
+// Reporting Demo
 function showReportsDemo() {
-    showAlert('Analytics and reporting features provide insights into cargo operations, delivery performance, and operational efficiency metrics.', 'info');
+    const message = `
+        Analytics and reporting features provide insights into cargo operations:<br><br>
+        • Total bookings and delivery performance<br>
+        • Flight utilization and capacity management<br>
+        • Customer tracking and service metrics<br>
+        • Operational efficiency reports<br><br>
+        These features help optimize cargo operations and improve customer service.
+    `;
+    showAlert(message, 'info');
 }
 </script>
 {% endblock %}
