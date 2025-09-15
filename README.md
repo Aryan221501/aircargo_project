@@ -18,6 +18,7 @@ The Air Cargo Booking & Tracking System is a full-featured web application desig
 - **Flight Integration**: Seamless integration with flight schedules and capacity management
 - **Status Management**: Complete lifecycle tracking (Booked → Departed → Arrived → Delivered)
 - **Responsive UI**: Modern, mobile-friendly interface built with Bootstrap 5
+- **User Authentication**: Secure user registration and login system
 
 ## 🛠 Technology Stack
 
@@ -37,22 +38,57 @@ The Air Cargo Booking & Tracking System is a full-featured web application desig
 
 ```
 aircargo_system/
+├── accounts/                 # User authentication and management
+│   ├── migrations/          # Database migrations for accounts
+│   ├── __init__.py          # Package initializer
+│   ├── admin.py             # Admin configuration
+│   ├── apps.py              # App configuration
+│   ├── models.py            # User models
+│   ├── serializers.py       # Data serialization
+│   ├── tests.py             # Unit tests
+│   ├── urls.py              # Account-specific URLs
+│   └── views.py             # Account API views
 ├── aircargo_system/          # Project settings and configuration
+│   ├── __init__.py          # Package initializer
+│   ├── asgi.py              # ASGI config
+│   ├── settings.py          # Project settings
+│   ├── urls.py              # Main URL configuration
+│   └── wsgi.py              # WSGI config
 ├── bookings/                 # Booking management app
+│   ├── migrations/          # Database migrations for bookings
+│   ├── __init__.py          # Package initializer
+│   ├── admin.py             # Admin configuration
+│   ├── apps.py              # App configuration
 │   ├── models.py            # Booking and event models
-│   ├── views.py             # Booking API views
 │   ├── serializers.py       # Data serialization
-│   └── urls.py              # Booking-specific URLs
+│   ├── tests.py             # Unit tests
+│   ├── urls.py              # Booking-specific URLs
+│   └── views.py             # Booking API views
 ├── flights/                  # Flight management app
+│   ├── migrations/          # Database migrations for flights
+│   ├── __init__.py          # Package initializer
+│   ├── admin.py             # Admin configuration
+│   ├── apps.py              # App configuration
 │   ├── models.py            # Flight model
-│   ├── views.py             # Flight API views
 │   ├── serializers.py       # Data serialization
-│   └── urls.py              # Flight-specific URLs
+│   ├── tests.py             # Unit tests
+│   ├── urls.py              # Flight-specific URLs
+│   └── views.py             # Flight API views
+├── media/                    # Media files (uploaded content)
+├── static/                   # Static assets
+│   └── css/                 # CSS stylesheets
+│       └── clean-dark.css   # Main stylesheet
 ├── templates/                # HTML templates
-├── static/                   # Static assets (CSS, JS, images)
+│   ├── base.html            # Base template
+│   ├── booking_detail.html  # Booking details page
+│   ├── create_booking.html  # Booking creation form
+│   ├── flight_integration.html # Flight integration page
+│   ├── index.html           # Home page
+│   └── search_booking.html  # Booking search page
 ├── manage.py                # Django management script
 ├── requirements.txt         # Python dependencies
-└── create_sample_data.py    # Sample data generation script
+├── create_sample_data.py    # Sample data generation script
+└── sample_data.py           # Sample data definitions
 ```
 
 ## 📋 System Requirements
@@ -220,6 +256,12 @@ Status transitions are managed through the API endpoints:
 - Automatic weight reservation
 - Multi-airline support
 
+### 5. User Authentication
+- User registration and login
+- Password management
+- Session handling
+- Access control
+
 ## 🔐 Admin Access
 
 ### Default Admin Credentials
@@ -251,6 +293,7 @@ Built with Bootstrap 5, the interface adapts seamlessly to different devices and
 - XSS protection
 - Input validation
 - Secure admin interface
+- User authentication and session management
 
 ## 📈 Performance Features
 
@@ -269,6 +312,12 @@ Built with Bootstrap 5, the interface adapts seamlessly to different devices and
 - Booking tracking system
 - Status update workflow
 - Admin interface operations
+- User authentication system
+
+### Test Files
+- `test_capacity_check.py` - Flight capacity validation
+- `test_capacity_check_fixed.py` - Fixed capacity validation tests
+- `test_multiple_flights_capacity.py` - Multi-flight capacity tests
 
 ### Test Data Available
 - Multiple booking scenarios
@@ -281,7 +330,7 @@ Built with Bootstrap 5, the interface adapts seamlessly to different devices and
 
 ### Project Organization
 The project follows Django's best practices with a modular structure:
-- Each app (`bookings`, `flights`) contains its own models, views, and serializers
+- Each app (`accounts`, `bookings`, `flights`) contains its own models, views, and serializers
 - Templates are centrally managed in the `templates/` directory
 - Static assets are in the `static/` directory
 - API endpoints are versioned under `/api/`
@@ -321,5 +370,5 @@ This project is developed as a comprehensive air cargo management solution with 
 ---
 
 **System Status**: ✅ Fully Operational  
-**Last Updated**: August 16, 2025  
+**Last Updated**: September 15, 2025  
 **Version**: 1.0.0
